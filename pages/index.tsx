@@ -1,27 +1,14 @@
-import React from 'react';
-import matter from 'gray-matter';
-import fs from 'fs';
-import path from 'path';
-import Link from 'next/link';
 import format from 'date-fns/format';
+import Link from 'next/link';
+import React from 'react';
+import { BlogPost, getPosts } from '../utils/posts';
 
 export async function unstable_getStaticProps() {
-  const postsDirectory = path.resolve(process.cwd(), '_posts');
-  const posts = fs
-    .readdirSync(postsDirectory)
-    .map(fileName => {
-      const fullPath = path.join(postsDirectory, fileName);
-      const content = fs.readFileSync(fullPath, 'utf8');
-      const {
-        data: { slug, title, date },
-      } = matter(content);
-      return { slug, title, date };
-    })
-    .sort((a, b) => a.date.localeCompare(b.date));
-  return { props: { posts }, revalidate: false };
+  const sortedPosts = getPosts().sort((a, b) => a.date.localeCompare(b.date));
+  return { props: { posts: sortedPosts } };
 }
 
-export default function Home({ posts }) {
+export default function Home({ posts }: { posts: BlogPost[] }) {
   return (
     <main className="page-content" aria-label="Content">
       <div className="wrapper">

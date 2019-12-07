@@ -1,40 +1,39 @@
-import React from 'react';
-import fs from 'fs';
-import path from 'path';
-import matter from 'gray-matter';
 import format from 'date-fns/format';
-import marked from 'marked';
 import hl from 'highlight.js';
+import marked from 'marked';
+import Head from 'next/head';
+import React from 'react';
+import { getPosts } from '../../utils/posts';
 
-export function unstable_getStaticPaths() {
-  const postsDirectory = path.resolve(process.cwd(), '_posts');
-  return fs.readdirSync(postsDirectory).map(fileName => {
-    const fullPath = path.join(postsDirectory, fileName);
-    const content = fs.readFileSync(fullPath, 'utf8');
-    const {
-      data: { slug },
-    } = matter(content);
-    return { params: { slug } };
-  });
-}
+type PostProps =
+  | { notFound: true }
+  | {
+      notFound?: false;
+      slug: string;
+      title: string;
+      date: string;
+      html: string;
+    };
 
-export function unstable_getStaticProps({ params }) {
+// Module state ... I know 🤷‍♂️
+// Why? 👇 it's used in both path and props fns.
+const posts = getPosts();
+
+export const unstable_getStaticPaths = () => posts.map(p => `/post/${p.slug}`);
+
+export function unstable_getStaticProps({
+  params,
+}: {
+  params: { slug: string };
+}): { props: PostProps } {
   const { slug } = params;
 
-  const postsDirectory = path.resolve(process.cwd(), '_posts');
-  const { title, date, content } = fs
-    .readdirSync(postsDirectory)
-    .map(fileName => {
-      const fullPath = path.join(postsDirectory, fileName);
-      const bytes = fs.readFileSync(fullPath, 'utf8');
-      const {
-        data: { slug, title, date },
-        content,
-      } = matter(bytes);
-      return { slug, title, date, content };
-    })
-    .find(({ slug: s }) => s === slug);
+  const post = posts.find(p => p.slug === slug);
+  if (post == null) {
+    return { props: { notFound: true } };
+  }
 
+  const { title, date, content } = post;
   return {
     props: {
       slug,
@@ -49,12 +48,24 @@ export function unstable_getStaticProps({ params }) {
   };
 }
 
-export default function Post({ slug, title, date, html }) {
+export default function Post(props: PostProps) {
+  if (props.notFound) {
+    return (
+      <Head>
+        <meta httpEquiv="refresh" content="0;URL='/'" />
+      </Head>
+    );
+  }
+
+  const { slug, title, date, html } = props;
   return (
     <main className="page-content" aria-label="Content">
       <div className="wrapper">
         <article className="post h-entry">
           <header className="post-header">
+            <Head>
+              <title>{title}</title>
+            </Head>
             <h1 className="post-title p-name" itemProp="name headline">
               {title}
             </h1>
