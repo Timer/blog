@@ -15,11 +15,8 @@ type PostProps =
       html: string;
     };
 
-// Module state ... I know 🤷‍♂️
-// Why? 👇 it's used in both path and props fns.
-const posts = getPosts();
-
-export const unstable_getStaticPaths = () => posts.map(p => `/post/${p.slug}`);
+export const unstable_getStaticPaths = () =>
+  getPosts().map(p => `/post/${p.slug}`);
 
 export function unstable_getStaticProps({
   params,
@@ -28,7 +25,7 @@ export function unstable_getStaticProps({
 }): { props: PostProps } {
   const { slug } = params;
 
-  const post = posts.find(p => p.slug === slug);
+  const post = getPosts().find(p => p.slug === slug);
   if (post == null) {
     return { props: { notFound: true } };
   }
