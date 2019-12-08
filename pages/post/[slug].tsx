@@ -2,6 +2,7 @@ import format from 'date-fns/format';
 import hl from 'highlight.js';
 import marked from 'marked';
 import Head from 'next/head';
+import Link from 'next/link';
 import React from 'react';
 import { getPosts } from '../../utils/posts';
 
@@ -63,6 +64,9 @@ export default function Post(props: PostProps) {
             <Head>
               <title>{title}</title>
             </Head>
+            <Link href="/">
+              <a>&laquo; Back</a>
+            </Link>
             <h1 className="post-title p-name" itemProp="name headline">
               {title}
             </h1>
@@ -84,6 +88,12 @@ export default function Post(props: PostProps) {
           ></div>
 
           <a className="u-url" href={`/post/${slug}`} hidden></a>
+
+          <footer className="site-footer">
+            <Link href="/">
+              <a>&laquo; Back</a>
+            </Link>
+          </footer>
         </article>
       </div>
     </main>
