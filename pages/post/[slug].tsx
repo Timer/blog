@@ -3,6 +3,7 @@ import hl from 'highlight.js';
 import marked from 'marked';
 import Head from 'next/head';
 import Link from 'next/link';
+import { useRouter } from 'next/router';
 import React from 'react';
 import { getPosts } from '../../utils/posts';
 
@@ -16,8 +17,9 @@ type PostProps =
       html: string;
     };
 
-export const unstable_getStaticPaths = () =>
-  getPosts().map(p => `/post/${p.slug}`);
+export const unstable_getStaticPaths = () => ({
+  paths: getPosts().map(p => `/post/${p.slug}`),
+});
 
 export function unstable_getStaticProps({
   params,
@@ -47,7 +49,13 @@ export function unstable_getStaticProps({
 }
 
 export default function Post(props: PostProps) {
-  if (props.notFound) {
+  const { isFallback } = useRouter();
+  if (
+    // This branch can be removed when `unstable_getStaticPaths` includes the
+    // `fallback: false` option.
+    isFallback ||
+    props.notFound
+  ) {
     return (
       <Head>
         <meta httpEquiv="refresh" content="0;URL='/'" />
