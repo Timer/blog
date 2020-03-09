@@ -22,7 +22,7 @@
     "gray-matter": "^4.0.2",
     "highlight.js": "^9.16.2",
     "marked": "^0.7.0",
-    "next": "^9.2.3-canary.12",
+    "next": "^9.3.1-canary.0",
     "react": "^16.11.0",
     "react-dom": "^16.11.0"
   },

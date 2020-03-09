@@ -4,7 +4,7 @@ import Link from 'next/link';
 import React from 'react';
 import { BlogPost, getPosts } from '../utils/posts';
 
-export async function unstable_getStaticProps() {
+export async function getStaticProps() {
   const sortedPosts = getPosts().sort((a, b) => a.date.localeCompare(b.date));
   return { props: { posts: sortedPosts } };
 }

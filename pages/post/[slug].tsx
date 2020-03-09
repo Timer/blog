@@ -3,36 +3,29 @@ import hl from 'highlight.js';
 import marked from 'marked';
 import Head from 'next/head';
 import Link from 'next/link';
-import { useRouter } from 'next/router';
 import React from 'react';
 import { getPosts } from '../../utils/posts';
 
-type PostProps =
-  | { notFound: true }
-  | {
-      notFound?: false;
-      slug: string;
-      title: string;
-      date: string;
-      html: string;
-    };
+type PostProps = {
+  slug: string;
+  title: string;
+  date: string;
+  html: string;
+};
 
-export const unstable_getStaticPaths = () => ({
+export const getStaticPaths = () => ({
   paths: getPosts().map(p => `/post/${p.slug}`),
+  fallback: false,
 });
 
-export function unstable_getStaticProps({
+export function getStaticProps({
   params,
 }: {
   params: { slug: string };
 }): { props: PostProps } {
   const { slug } = params;
 
-  const post = getPosts().find(p => p.slug === slug);
-  if (post == null) {
-    return { props: { notFound: true } };
-  }
-
+  const post = getPosts().find(p => p.slug === slug)!;
   const { title, date, content } = post;
   return {
     props: {
@@ -49,20 +42,6 @@ export function unstable_getStaticProps({
 }
 
 export default function Post(props: PostProps) {
-  const { isFallback } = useRouter();
-  if (
-    // This branch can be removed when `unstable_getStaticPaths` includes the
-    // `fallback: false` option.
-    isFallback ||
-    props.notFound
-  ) {
-    return (
-      <Head>
-        <meta httpEquiv="refresh" content="0;URL='/'" />
-      </Head>
-    );
-  }
-
   const { slug, title, date, html } = props;
   return (
     <main className="page-content" aria-label="Content">
