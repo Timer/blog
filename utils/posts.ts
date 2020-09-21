@@ -15,7 +15,7 @@ export function getPosts(): BlogPost[] {
   const postFiles = fs.readdirSync(postsDirectory);
 
   // Prepare posts off file system
-  const posts = postFiles.map(fileName => {
+  const posts = postFiles.map((fileName) => {
     const fullPath = path.join(postsDirectory, fileName);
     const bytes = fs.readFileSync(fullPath, 'utf8');
     const {
@@ -25,5 +25,5 @@ export function getPosts(): BlogPost[] {
     return { slug, title, date, content };
   });
 
-  return posts;
+  return posts.sort((a, b) => b.date.localeCompare(a.date));
 }

@@ -5,7 +5,7 @@ import React from 'react';
 import { BlogPost, getPosts } from '../utils/posts';
 
 export async function getStaticProps() {
-  const sortedPosts = getPosts().sort((a, b) => a.date.localeCompare(b.date));
+  const sortedPosts = getPosts();
   return { props: { posts: sortedPosts } };
 }
 
@@ -20,7 +20,7 @@ export default function Home({ posts }: { posts: BlogPost[] }) {
           <h1 className="page-heading">timer.blog</h1>
           <h2 className="post-list-heading">Posts</h2>
           <ul className="post-list">
-            {posts.map(post => (
+            {posts.map((post) => (
               <li key={post.slug}>
                 <span className="post-meta">
                   {format(new Date(post.date), 'MMM d, yyyy')}
