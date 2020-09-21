@@ -53,13 +53,13 @@ You can learn more about the [_Unit_](https://www.freedesktop.org/software/syste
 The _Install_ section is used to configure when the service will start. Most commonly, you'll want `multi-user.target`.
 The `WantedBy` value directly corresponds to different [Linux runlevels](https://en.wikipedia.org/wiki/Runlevel):
 
-| runlevel | WantedBy value    | Description                                                            |
-| -------- | ----------------- | ---------------------------------------------------------------------- |
-| 0        | poweroff.target   | Run before the computer shuts down                                     |
-| 1        | rescue.target     | Run when the system is in single-user mode                             |
-| 2-4      | multi-user.target | Run when the system is ready for login, but before networking is setup |
-| 5        | graphical.target  | Run when the display manager has started                               |
-| 6        | reboot.target     | Run before the computer reboots                                        |
+| runlevel | WantedBy value      | Description                                                            |
+| -------- | ------------------- | ---------------------------------------------------------------------- |
+| 0        | `poweroff.target`   | Run before the computer shuts down                                     |
+| 1        | `rescue.target`     | Run when the system is in single-user mode                             |
+| 2-4      | `multi-user.target` | Run when the system is ready for login, but before networking is setup |
+| 5        | `graphical.target`  | Run when the display manager has started                               |
+| 6        | `reboot.target`     | Run before the computer reboots                                        |
 
 ### Enabling the Systemd Unit
 
