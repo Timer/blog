@@ -4,7 +4,7 @@ title: 'Walkthrough: How to start a long-running command on boot with systemd'
 date: '2020-09-20T17:25:03.614Z'
 ---
 
-### 1. Creating the Systemd Unit
+### Creating the Systemd Unit
 
 Systemd is a process manager can start, stop, and manage processes ("_Units_") on boot or shutdown of your machine!
 In this walkthrough, we'll be starting a long-running Node.js web server that lives in `/var/www/`.
@@ -62,7 +62,7 @@ The `WantedBy` value directly corresponds to different [Linux runlevels](https:/
 | 5        | graphical.target  | Run when the display manager has started                               |
 | 6        | reboot.target     | Run before the computer reboots                                        |
 
-### 2. Enabling the Systemd Unit
+### Enabling the Systemd Unit
 
 Now that the unit has been created, we need to reload the Systemd process.
 This will allow Systemd to recognize the new file.
