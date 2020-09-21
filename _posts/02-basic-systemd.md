@@ -51,7 +51,6 @@ Read the comments placed in the above file to understand what each section is fo
 You can learn more about the [_Unit_](https://www.freedesktop.org/software/systemd/man/systemd.unit.html) or [_Service_](https://www.freedesktop.org/software/systemd/man/systemd.service.html) sections in the systemd documentation.
 
 The _Install_ section is used to configure when the service will start. Most commonly, you'll want `multi-user.target`.
-
 The `WantedBy` value directly corresponds to different [Linux runlevels](https://en.wikipedia.org/wiki/Runlevel):
 
 | runlevel | WantedBy value    | Description                                                            |
