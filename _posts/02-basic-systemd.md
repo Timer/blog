@@ -74,7 +74,7 @@ systemctl daemon-reload
 
 > **Tip**: You need to execute the above command to reload Systemd **every time** you edit your `.service` file(s).
 
-Next, you'll need to **enable** the service. Running this command will create a symlink into your `WantedBy` target.
+Next, you'll need to enable the service. Running this command will create a symlink into your `WantedBy` target.
 
 ```bash
 systemctl enable webserver
