@@ -92,7 +92,7 @@ success
 success
 ```
 
-> **Tip**: To run one-command per CPU, you can use this handy shortcut:
+> **Tip**: To run one command per CPU, you can use this handy shortcut:
 >
 > ```bash
 > xargs -n 1 -P $(getconf _NPROCESSORS_ONLN) command
@@ -104,4 +104,6 @@ Good luck! 🏎
 TODO: how to handle spaces in arguments:
 1. echo with escaped slashes
 2. use NUL (``\0'') characters as the separator, instead of spaces and lines (see -print0 w/ find(1))
+3. use -I@ to interpolate multiple times
+4. bash -c
 -->
