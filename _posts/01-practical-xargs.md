@@ -66,7 +66,7 @@ success
 success
 ```
 
-> **Note**: The `aws s3 rm` command was invoked three times—one per input.
+> **Note**: The `aws s3 rm` command was invoked three times, once per input.
 
 Success! 🎉
 
