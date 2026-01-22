@@ -6,10 +6,10 @@ date: '2020-09-20T17:25:03.614Z'
 
 ### Creating the Systemd Unit
 
-Systemd is a process manager can start, stop, and manage processes ("_Units_") on boot or shutdown of your machine!
+Systemd is a process manager that can start, stop, and manage processes ("_Units_") on boot or shutdown of your machine!
 In this walkthrough, we'll be starting a long-running Node.js web server that lives in `/var/www/`.
 
-To create a new _Unit_, we need to create a file in `/etc/systemd/system/` (the default location most Linux distributions).
+To create a new _Unit_, we need to create a file in `/etc/systemd/system/` (the default location on most Linux distributions).
 This file should have the `.service` extension.
 
 Let's create `/etc/systemd/system/webserver.service`:
@@ -17,25 +17,25 @@ Let's create `/etc/systemd/system/webserver.service`:
 ```ini
 [Unit]
 # Since we're going to bind to a port on localhost, we need to wait for the
-# network service to boot:
-After=network.service
-Description="My fancy web sever"
+# network to be available:
+After=network.target
+Description=My fancy web server
 
-# Configure your long-running process:
-# You'll want to adjust:
-# * WorkingDirectory: change this to the directory your application is in
-# * Environment: add or remove these options depending on your environment variable needs
-# * ExecStart: this is the command that'll be run to start your application
 [Service]
-WorkingDirectory=/var/www # set the cwd (current working directory)
-Environment=NODE_ENV="production"
+# Set the working directory to where your application lives
+WorkingDirectory=/var/www
+# Set any environment variables your application needs
+Environment=NODE_ENV=production
 Environment=PORT=3000
-ExecStart=npm start # start your webserver! e.g. `node server.js`
-Restart=always # always restart the webserver if it crashes
-RestartSec=3 # after a crash, wait 3 seconds before restarting the server
+# Start your webserver (use absolute path - find yours with `which node`)
+ExecStart=/usr/bin/node server.js
+# Restart the service if it crashes
+Restart=always
+# Wait 3 seconds before restarting
+RestartSec=3
 
-# Run this service anytime the system boots:
 [Install]
+# Start this service when the system boots to multi-user mode
 WantedBy=multi-user.target
 ```
 
@@ -53,13 +53,13 @@ You can learn more about the [_Unit_](https://www.freedesktop.org/software/syste
 The _Install_ section is used to configure when the service will start. Most commonly, you'll want `multi-user.target`.
 The `WantedBy` value directly corresponds to different [Linux runlevels](https://en.wikipedia.org/wiki/Runlevel):
 
-| runlevel | WantedBy value      | Description                                                            |
-| -------- | ------------------- | ---------------------------------------------------------------------- |
-| 0        | `poweroff.target`   | Run before the computer shuts down                                     |
-| 1        | `rescue.target`     | Run when the system is in single-user mode                             |
-| 2-4      | `multi-user.target` | Run when the system is ready for login, but before networking is setup |
-| 5        | `graphical.target`  | Run when the display manager has started                               |
-| 6        | `reboot.target`     | Run before the computer reboots                                        |
+| runlevel | WantedBy value      | Description                                            |
+| -------- | ------------------- | ------------------------------------------------------ |
+| 0        | `poweroff.target`   | Run before the computer shuts down                     |
+| 1        | `rescue.target`     | Run when the system is in single-user mode             |
+| 2-4      | `multi-user.target` | Non-graphical multi-user system (networking available) |
+| 5        | `graphical.target`  | Run when the display manager has started               |
+| 6        | `reboot.target`     | Run before the computer reboots                        |
 
 ### Enabling the Systemd Unit
 
@@ -91,8 +91,8 @@ systemctl start webserver
 **Enabling (creating) or Disabling (deleting) your service**
 
 ```bash
-systemctl enable webserver # install a new service file
-systemctl disable webserver # uninstall a service file
+systemctl enable webserver # enable service to start on boot
+systemctl disable webserver # disable service from starting on boot
 ```
 
 **Starting, Restarting, or Stopping your service**
