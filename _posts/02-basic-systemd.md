@@ -111,11 +111,7 @@ systemctl stop webserver
 systemctl status webserver
 ```
 
----
-
 <small>
-
-### References
 
 <span id="ref-1">[1]</span> freedesktop.org. ["systemd.unit — Unit configuration"](https://www.freedesktop.org/software/systemd/man/latest/systemd.unit.html). systemd documentation.
 

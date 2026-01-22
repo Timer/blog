@@ -100,11 +100,7 @@ success
 
 Good luck! 🏎
 
----
-
 <small>
-
-### References
 
 <span id="ref-1">[1]</span> IEEE Std 1003.1. ["xargs — construct argument lists and invoke utility"](https://pubs.opengroup.org/onlinepubs/9699919799/utilities/xargs.html). The Open Group Base Specifications.
 
