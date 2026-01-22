@@ -1,10 +1,22 @@
-import format from 'date-fns/format';
-import hl from 'highlight.js';
-import marked from 'marked';
+import { format } from 'date-fns';
+import hljs from 'highlight.js';
+import { Marked } from 'marked';
+import { markedHighlight } from 'marked-highlight';
 import Head from 'next/head';
 import Link from 'next/link';
 import React from 'react';
 import { getPosts } from '../../utils/posts';
+
+const marked = new Marked(
+  markedHighlight({
+    highlight(code, lang) {
+      if (lang && hljs.getLanguage(lang)) {
+        return hljs.highlight(code, { language: lang }).value;
+      }
+      return code;
+    },
+  })
+);
 
 type PostProps = {
   slug: string;
@@ -14,29 +26,23 @@ type PostProps = {
 };
 
 export const getStaticPaths = () => ({
-  paths: getPosts().map(p => `/post/${p.slug}`),
+  paths: getPosts().map((p) => `/post/${p.slug}`),
   fallback: false,
 });
 
-export function getStaticProps({
-  params,
-}: {
-  params: { slug: string };
-}): { props: PostProps } {
+export function getStaticProps({ params }: { params: { slug: string } }): {
+  props: PostProps;
+} {
   const { slug } = params;
 
-  const post = getPosts().find(p => p.slug === slug)!;
+  const post = getPosts().find((p) => p.slug === slug)!;
   const { title, date, content } = post;
   return {
     props: {
       slug,
       title,
       date,
-      html: marked(content, {
-        highlight: function(code, lang) {
-          return hl.highlight(lang, code).value;
-        },
-      }),
+      html: marked.parse(content) as string,
     },
   };
 }
@@ -51,9 +57,7 @@ export default function Post(props: PostProps) {
             <Head>
               <title>{title}</title>
             </Head>
-            <Link href="/">
-              <a>&laquo; Back</a>
-            </Link>
+            <Link href="/">&laquo; Back</Link>
             <h1 className="post-title p-name" itemProp="name headline">
               {title}
             </h1>
@@ -77,9 +81,7 @@ export default function Post(props: PostProps) {
           <a className="u-url" href={`/post/${slug}`} hidden></a>
 
           <footer className="site-footer">
-            <Link href="/">
-              <a>&laquo; Back</a>
-            </Link>
+            <Link href="/">&laquo; Back</Link>
           </footer>
         </article>
       </div>

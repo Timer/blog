@@ -6,7 +6,8 @@
   "scripts": {
     "start": "next dev",
     "prebuild": "node stats.js",
-    "build": "next build"
+    "build": "next build",
+    "prepare": "husky"
   },
   "repository": {
     "type": "git",
@@ -19,27 +20,21 @@
   "license": "UNLICENSED",
   "homepage": "https://timer.blog",
   "dependencies": {
-    "date-fns": "^2.14.0",
-    "gray-matter": "^4.0.2",
-    "highlight.js": "^10.4.1",
-    "marked": "^1.1.0",
-    "next": "^9.5.6-canary.15",
-    "react": "^16.13.1",
-    "react-dom": "^16.13.1"
+    "date-fns": "^4.1.0",
+    "gray-matter": "^4.0.3",
+    "highlight.js": "^11.11.1",
+    "marked": "^15.0.6",
+    "marked-highlight": "^2.2.1",
+    "next": "^16.1.4",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
   },
   "devDependencies": {
-    "@types/highlight.js": "^9.12.4",
-    "@types/marked": "^1.1.0",
-    "@types/node": "^12.12.14",
-    "@types/react": "^16.9.42",
-    "husky": "^4.2.5",
-    "prettier": "^2.0.5",
-    "pretty-quick": "^2.0.1",
-    "typescript": "^3.9.6"
-  },
-  "husky": {
-    "hooks": {
-      "pre-commit": "pretty-quick --staged"
-    }
+    "@types/node": "^22.10.7",
+    "@types/react": "^19.0.7",
+    "husky": "^9.1.7",
+    "prettier": "^3.4.2",
+    "pretty-quick": "^4.0.0",
+    "typescript": "^5.7.3"
   }
 }

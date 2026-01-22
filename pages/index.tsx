@@ -1,4 +1,4 @@
-import format from 'date-fns/format';
+import { format } from 'date-fns';
 import Head from 'next/head';
 import Link from 'next/link';
 import React from 'react';
@@ -26,8 +26,8 @@ export default function Home({ posts }: { posts: BlogPost[] }) {
                   {format(new Date(post.date), 'MMM d, yyyy')}
                 </span>
                 <h3>
-                  <Link href="/post/[slug]" as={`/post/${post.slug}`}>
-                    <a className="post-link">{post.title}</a>
+                  <Link href={`/post/${post.slug}`} className="post-link">
+                    {post.title}
                   </Link>
                 </h3>
               </li>
