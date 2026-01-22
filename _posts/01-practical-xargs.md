@@ -4,7 +4,7 @@ title: 'xargs(1), Shell Brace Expansion, and Single-Line Execution'
 date: '2019-12-08T05:35:07.322Z'
 ---
 
-`xargs` reads space and line delimited strings from stdin and executes a specified command with the input as arguments.
+`xargs` reads space and line delimited strings from stdin and executes a specified command with the input as arguments.<sup><a href="#ref-1">[1]</a></sup>
 
 This makes `xargs` a very powerful command when you want to run a command against arbitrary input.
 
@@ -47,8 +47,8 @@ For example, using brace expansion and `xargs` to pipe S3 paths to `aws s3 rm` d
 Unknown options: s3://my-bucket/partition-2/,s3://my-bucket/partition-3/
 ```
 
-To solve this, `xargs` accepts an `-n <number>` argument.
-The `-n` argument configures how many arguments should be per command invocation (the default is `5000`).
+To solve this, `xargs` accepts an `-n <number>` argument.<sup><a href="#ref-2">[2]</a></sup>
+The `-n` argument configures how many arguments should be per command invocation.
 
 So, since `aws s3 rm` only accepts one argument, we can pass `-n 1` to `xargs` to execute one command per argument:
 
@@ -73,7 +73,7 @@ Success! 🎉
 Now that we're running one command per argument, it's important to note it's done so sequentially.
 However, you may also want to parallelize execution of long-running commands.
 
-`xargs` has an argument for parallelizing execution: `-P <number>`.
+`xargs` has an argument for parallelizing execution: `-P <number>`.<sup><a href="#ref-3">[3]</a></sup>
 
 The above `aws s3 rm --recursive` example may take a long time per path, so we can maximize efficiency by running all the commands at once.
 To do this, we'll pass the `-P 3` argument:
@@ -99,6 +99,20 @@ success
 > ```
 
 Good luck! 🏎
+
+---
+
+<small>
+
+### References
+
+<span id="ref-1">[1]</span> IEEE Std 1003.1. ["xargs — construct argument lists and invoke utility"](https://pubs.opengroup.org/onlinepubs/9699919799/utilities/xargs.html). The Open Group Base Specifications.
+
+<span id="ref-2">[2]</span> GNU. ["xargs invocation"](https://www.gnu.org/software/findutils/manual/html_node/find_html/xargs-options.html). GNU Findutils Manual. `-n max-args`: Use at most max-args arguments per command line.
+
+<span id="ref-3">[3]</span> GNU. ["Controlling Parallelism"](https://www.gnu.org/software/findutils/manual/html_node/find_html/Controlling-Parallelism.html). GNU Findutils Manual. `-P max-procs`: Run up to max-procs processes at a time.
+
+</small>
 
 <!--
 TODO: how to handle spaces in arguments:
