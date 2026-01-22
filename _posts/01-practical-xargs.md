@@ -29,13 +29,13 @@ hello there big world
 
 > **Note**: All computed input arguments were passed to a single `echo` command.
 
-For more practical usage, you may find yourself wanting to run a command per single input line.
-For example, when the command you're using doesn't support multiple arguments.
+For more practical usage, you may find yourself wanting to run a command once per argument.
+For example, when the command you're using only accepts a single argument.
 
 A common command I find this useful for is `aws s3`.
-`aws s3` doesn't support passing multiple arguments, so each command may only accept a single bucket name.
+`aws s3` doesn't support passing multiple arguments, so each command may only accept a single S3 path.
 
-For example, using brace expansion and `xargs` to pipe bucket names to `aws s3 rm` doesn't work:
+For example, using brace expansion and `xargs` to pipe S3 paths to `aws s3 rm` doesn't work:
 
 ```bash
 ❯ echo s3://my-bucket/partition-{1..3}/ | xargs aws s3 rm --recursive
@@ -50,7 +50,7 @@ Unknown options: s3://my-bucket/partition-2/,s3://my-bucket/partition-3/
 To solve this, `xargs` accepts an `-n <number>` argument.
 The `-n` argument configures how many arguments should be per command invocation (the default is `5000`).
 
-So, since `aws s3 rm` only accepts one argument, we can pass `-n 1` to `xargs` to execute a single command per line:
+So, since `aws s3 rm` only accepts one argument, we can pass `-n 1` to `xargs` to execute one command per argument:
 
 ```bash
 ❯ echo s3://my-bucket/partition-{1..3}/ | xargs -n 1 aws s3 rm --recursive
@@ -66,16 +66,16 @@ success
 success
 ```
 
-> **Note**: The `aws s3 rm` command was invoked three times, once per input.
+> **Note**: The `aws s3 rm` command was invoked three times, once per argument.
 
 Success! 🎉
 
-Now that we're running one command per line, it's important to note it's done so sequentially.
+Now that we're running one command per argument, it's important to note it's done so sequentially.
 However, you may also want to parallelize execution of long-running commands.
 
 `xargs` has an argument for parallelizing execution: `-P <number>`.
 
-The above `aws s3 rm --recursive` example may take very long per parition, so we can maximize efficency by running all the commands at once.
+The above `aws s3 rm --recursive` example may take a long time per path, so we can maximize efficiency by running all the commands at once.
 To do this, we'll pass the `-P 3` argument:
 
 ```bash
