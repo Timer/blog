@@ -104,9 +104,9 @@ Good luck! 🏎
 
 <span id="ref-1">[1]</span> IEEE Std 1003.1. ["xargs — construct argument lists and invoke utility"](https://pubs.opengroup.org/onlinepubs/9699919799/utilities/xargs.html). The Open Group Base Specifications.
 
-<span id="ref-2">[2]</span> GNU. ["xargs invocation"](https://www.gnu.org/software/findutils/manual/html_node/find_html/xargs-options.html). GNU Findutils Manual. `-n max-args`: Use at most max-args arguments per command line.
+<span id="ref-2">[2]</span> GNU. ["xargs invocation"](https://www.gnu.org/software/findutils/manual/html_node/find_html/xargs-options.html). GNU Findutils Manual. <code style="font-size:inherit">-n max-args</code>: Use at most max-args arguments per command line.
 
-<span id="ref-3">[3]</span> GNU. ["Controlling Parallelism"](https://www.gnu.org/software/findutils/manual/html_node/find_html/Controlling-Parallelism.html). GNU Findutils Manual. `-P max-procs`: Run up to max-procs processes at a time.
+<span id="ref-3">[3]</span> GNU. ["Controlling Parallelism"](https://www.gnu.org/software/findutils/manual/html_node/find_html/Controlling-Parallelism.html). GNU Findutils Manual. <code style="font-size:inherit">-P max-procs</code>: Run up to max-procs processes at a time.
 
 </small>
 
