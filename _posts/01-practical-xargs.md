@@ -4,7 +4,7 @@ title: 'xargs(1), Shell Brace Expansion, and Single-Line Execution'
 date: '2019-12-08T05:35:07.322Z'
 ---
 
-`xargs` reads space and line delimited strings from stdin and executes a specified command with the input as arguments.<sup><a href="#ref-1">[1]</a></sup>
+`xargs` reads space and line delimited strings from stdin and executes a specified command with the input as arguments.<sub style="font-size:0.7em"><a href="#ref-1">[1]</a></sub>
 
 This makes `xargs` a very powerful command when you want to run a command against arbitrary input.
 
@@ -47,7 +47,7 @@ For example, using brace expansion and `xargs` to pipe S3 paths to `aws s3 rm` d
 Unknown options: s3://my-bucket/partition-2/,s3://my-bucket/partition-3/
 ```
 
-To solve this, `xargs` accepts an `-n <number>` argument.<sup><a href="#ref-2">[2]</a></sup>
+To solve this, `xargs` accepts an `-n <number>` argument.<sub style="font-size:0.7em"><a href="#ref-2">[2]</a></sub>
 The `-n` argument configures how many arguments should be per command invocation.
 
 So, since `aws s3 rm` only accepts one argument, we can pass `-n 1` to `xargs` to execute one command per argument:
@@ -73,7 +73,7 @@ Success! 🎉
 Now that we're running one command per argument, it's important to note it's done so sequentially.
 However, you may also want to parallelize execution of long-running commands.
 
-`xargs` has an argument for parallelizing execution: `-P <number>`.<sup><a href="#ref-3">[3]</a></sup>
+`xargs` has an argument for parallelizing execution: `-P <number>`.<sub style="font-size:0.7em"><a href="#ref-3">[3]</a></sub>
 
 The above `aws s3 rm --recursive` example may take a long time per path, so we can maximize efficiency by running all the commands at once.
 To do this, we'll pass the `-P 3` argument:

@@ -6,7 +6,7 @@ date: '2020-09-20T17:25:03.614Z'
 
 ### Creating the Systemd Unit
 
-Systemd is a process manager that can start, stop, and manage processes ("_Units_") on boot or shutdown of your machine!<sup><a href="#ref-1">[1]</a></sup>
+Systemd is a process manager that can start, stop, and manage processes ("_Units_") on boot or shutdown of your machine!<sub style="font-size:0.7em"><a href="#ref-1">[1]</a></sub>
 In this walkthrough, we'll be starting a long-running Node.js web server that lives in `/var/www/`.
 
 To create a new _Unit_, we need to create a file in `/etc/systemd/system/` (the default location on most Linux distributions).
@@ -48,11 +48,11 @@ chmod 664 /etc/systemd/system/webserver.service
 Don't be intimidated by the file above! A lot of it is boilerplate.
 Read the comments placed in the above file to understand what each section is for!
 
-> **Note**: Comments in systemd unit files must be on their own line—inline comments after values are not supported.<sup><a href="#ref-2">[2]</a></sup> The `ExecStart` directive requires an absolute path to the executable.<sup><a href="#ref-3">[3]</a></sup>
+> **Note**: Comments in systemd unit files must be on their own line—inline comments after values are not supported.<sub style="font-size:0.7em"><a href="#ref-2">[2]</a></sub> The `ExecStart` directive requires an absolute path to the executable.<sub style="font-size:0.7em"><a href="#ref-3">[3]</a></sub>
 
 You can learn more about the [_Unit_](https://www.freedesktop.org/software/systemd/man/systemd.unit.html) or [_Service_](https://www.freedesktop.org/software/systemd/man/systemd.service.html) sections in the systemd documentation.
 
-The _Install_ section is used to configure when the service will start. Most commonly, you'll want `multi-user.target`.<sup><a href="#ref-4">[4]</a></sup>
+The _Install_ section is used to configure when the service will start. Most commonly, you'll want `multi-user.target`.<sub style="font-size:0.7em"><a href="#ref-4">[4]</a></sub>
 The `WantedBy` value directly corresponds to different [Linux runlevels](https://en.wikipedia.org/wiki/Runlevel):
 
 | runlevel | WantedBy value      | Description                                            |
