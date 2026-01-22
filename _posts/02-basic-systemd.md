@@ -2,6 +2,7 @@
 slug: 'basic-systemd'
 title: 'Walkthrough: How to start a long-running command on boot with systemd'
 date: '2020-09-20T17:25:03.614Z'
+lastEdited: '2026-01-22'
 ---
 
 ### Creating the Systemd Unit

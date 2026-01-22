@@ -22,6 +22,7 @@ type PostProps = {
   slug: string;
   title: string;
   date: string;
+  lastEdited?: string;
   html: string;
 };
 
@@ -36,19 +37,20 @@ export function getStaticProps({ params }: { params: { slug: string } }): {
   const { slug } = params;
 
   const post = getPosts().find((p) => p.slug === slug)!;
-  const { title, date, content } = post;
+  const { title, date, lastEdited, content } = post;
   return {
     props: {
       slug,
       title,
       date,
+      lastEdited,
       html: marked.parse(content) as string,
     },
   };
 }
 
 export default function Post(props: PostProps) {
-  const { slug, title, date, html } = props;
+  const { slug, title, date, lastEdited, html } = props;
   return (
     <main className="page-content" aria-label="Content">
       <div className="wrapper">
@@ -69,6 +71,16 @@ export default function Post(props: PostProps) {
               >
                 {format(new Date(date), 'MMM d, yyyy')}
               </time>
+              {lastEdited && (
+                <span style={{ color: '#828282' }}>
+                  {' '}
+                  (Updated:{' '}
+                  <time dateTime={lastEdited}>
+                    {format(new Date(lastEdited), 'MMM d, yyyy')}
+                  </time>
+                  )
+                </span>
+              )}
             </p>
           </header>
 

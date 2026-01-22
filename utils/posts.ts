@@ -6,6 +6,7 @@ export type BlogPost = {
   slug: string;
   title: string;
   date: string;
+  lastEdited?: string;
   content: string;
 };
 
@@ -19,10 +20,10 @@ export function getPosts(): BlogPost[] {
     const fullPath = path.join(postsDirectory, fileName);
     const bytes = fs.readFileSync(fullPath, 'utf8');
     const {
-      data: { slug, title, date },
+      data: { slug, title, date, lastEdited },
       content,
     } = matter(bytes);
-    return { slug, title, date, content };
+    return { slug, title, date, lastEdited, content };
   });
 
   return posts.sort((a, b) => b.date.localeCompare(a.date));

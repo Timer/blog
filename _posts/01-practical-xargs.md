@@ -2,6 +2,7 @@
 slug: 'practical-xargs'
 title: 'xargs(1), Shell Brace Expansion, and Single-Line Execution'
 date: '2019-12-08T05:35:07.322Z'
+lastEdited: '2026-01-22'
 ---
 
 `xargs` reads space and line delimited strings from stdin and executes a specified command with the input as arguments.<sub style="font-size:0.7em"><a href="#ref-1">[1]</a></sub>
