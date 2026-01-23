@@ -72,7 +72,7 @@ export default function Post(props: PostProps) {
                 {format(new Date(date), 'MMM d, yyyy')}
               </time>
               {lastEdited && (
-                <span style={{ color: '#828282' }}>
+                <span style={{ color: '#757575' }}>
                   {' '}
                   (Updated:{' '}
                   <time dateTime={lastEdited}>
