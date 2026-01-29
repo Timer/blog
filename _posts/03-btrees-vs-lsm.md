@@ -1,14 +1,12 @@
 ---
 slug: 'btrees-vs-lsm'
-title: 'Thoughts on storage: from hash tables to LSM trees'
+title: 'The art of procrastination, in storage'
 date: '2026-01-28T12:00:00.000Z'
 ---
 
-Have you ever encouraged procrastination? _Yeah, you can do that later..._
+When do you organize your data? Every write, or... later?
 
-What about in computing? Every data structure has to decide when to pay the "bookkeeping" cost. Do you organize as you go, or defer it and batch the work later?
-
-This question has driven decades of innovation in how we store and retrieve data. Let's trace that evolution.
+Hash tables and B-trees said: every write. LSM trees said: later. Turns out, procrastinating is sometimes the right call.
 
 ### Hash tables: The baseline
 
@@ -38,7 +36,7 @@ This is the backbone of most relational databases: PostgreSQL, MySQL InnoDB, SQL
 4. Write it back
 5. Maybe rebalance, triggering more writes
 
-Your data is always organized. Lookups are predictable. But you're paying the bookkeeping cost on every operation, and that cost is **random I/O**.<sub style="font-size:0.7em"><a href="#ref-1">[1]</a></sub>
+Your data is always organized. Lookups are predictable. But you're paying the bookkeeping cost on every operation, and that cost is random I/O.<sub style="font-size:0.7em"><a href="#ref-1">[1]</a></sub>
 
 ### The log-structured insight
 
@@ -64,9 +62,9 @@ LSM trees (Log-Structured Merge trees) took the append-only insight and applied 
 
 The design:
 
-1. Writes go to memory first, in a sorted buffer called a **memtable**
-2. When it fills up, flush to disk as a sorted file called an **SSTable**
-3. Periodically merge SSTables in the background (**compaction**)
+1. Writes go to memory first, in a sorted buffer called a memtable
+2. When it fills up, flush to disk as a sorted file called an SSTable
+3. Periodically merge SSTables in the background (compaction)
 
 Instead of organizing on every write, you batch it up and do it asynchronously. The bookkeeping still happens, just later, in bulk, when sequential I/O makes it cheap.
 
@@ -92,9 +90,9 @@ For many workloads, read performance is comparable to B-trees. For write-heavy w
 
 Here's where it gets interesting.
 
-**Spatial locality** assumes data near each other in address space should be stored together. B-trees optimize for this: record #1000 is stored near record #1001.
+Spatial locality assumes data near each other in address space should be stored together. B-trees optimize for this: record #1000 is stored near record #1001.
 
-**Temporal locality** assumes data written at the same time should be stored together. LSM trees optimize for this: everything flushed in the same batch ends up in the same SSTable.
+Temporal locality assumes data written at the same time should be stored together. LSM trees optimize for this: everything flushed in the same batch ends up in the same SSTable.
 
 Why does temporal locality matter? Because it matches how systems actually behave:
 
