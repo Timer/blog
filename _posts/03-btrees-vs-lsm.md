@@ -1,6 +1,6 @@
 ---
 slug: 'btrees-vs-lsm'
-title: 'The Evolution of Storage: From Hash Tables to LSM Trees'
+title: 'Thoughts on storage: from hash tables to LSM trees'
 date: '2026-01-28T12:00:00.000Z'
 ---
 
