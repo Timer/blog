@@ -23,7 +23,7 @@ export function getPosts(): BlogPost[] {
       data: { slug, title, date, lastEdited },
       content,
     } = matter(bytes);
-    return { slug, title, date, lastEdited, content };
+    return { slug, title, date, ...(lastEdited && { lastEdited }), content };
   });
 
   return posts.sort((a, b) => b.date.localeCompare(a.date));

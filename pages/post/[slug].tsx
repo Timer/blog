@@ -43,7 +43,7 @@ export function getStaticProps({ params }: { params: { slug: string } }): {
       slug,
       title,
       date,
-      lastEdited,
+      ...(lastEdited && { lastEdited }),
       html: marked.parse(content) as string,
     },
   };
