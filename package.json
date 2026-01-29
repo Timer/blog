@@ -20,6 +20,7 @@
   "license": "UNLICENSED",
   "homepage": "https://timer.blog",
   "dependencies": {
+    "@vercel/analytics": "^1.6.1",
     "date-fns": "^4.1.0",
     "gray-matter": "^4.0.3",
     "highlight.js": "^11.11.1",
