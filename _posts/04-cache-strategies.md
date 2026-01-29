@@ -6,7 +6,7 @@ date: '2026-01-29T12:00:00.000Z'
 
 Where does the write go? To the cache, to the backing store, or both?
 
-This question defines your caching strategy. Get it wrong and you lose data or tank performance. Get it right and you unlock the same trick that makes [LSM trees](/posts/btrees-vs-lsm) and NVMe drives fast.
+This question defines your caching strategy. Get it wrong and you lose data or tank performance. Get it right and you unlock the same trick that makes [LSM trees](/post/btrees-vs-lsm) and NVMe drives fast.
 
 ### Write-through
 
