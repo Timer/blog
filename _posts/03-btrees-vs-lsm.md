@@ -129,7 +129,7 @@ And that's my love letter to the LSM tree. It's not real magic, but it's damn cl
 
 <small>
 
-<span id="ref-1">[1]</span> Graefe. ["Modern B-Tree Techniques"](https://w6113.github.io/files/papers/btreesurvey-graefe.pdf). Foundations and Trends in Databases, 2011.
+<span id="ref-1">[1]</span> Graefe. ["Modern B-Tree Techniques"](https://doi.org/10.1561/1900000028). Foundations and Trends in Databases, 2011.
 
 <span id="ref-2">[2]</span> Rosenblum & Ousterhout. ["The Design and Implementation of a Log-Structured File System"](https://people.eecs.berkeley.edu/~brewer/cs262/LFS.pdf). SOSP, 1991.
 
