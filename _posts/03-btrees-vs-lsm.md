@@ -133,7 +133,7 @@ And that's my love letter to the LSM tree. It's not real magic, but it's damn cl
 
 <span id="ref-3">[3]</span> Jacobs. ["The Pathologies of Big Data"](https://queue.acm.org/detail.cfm?id=1563874). ACM Queue, 2009.
 
-<span id="ref-4">[4]</span> O'Neil et al. "The Log-Structured Merge-Tree". Acta Informatica, 1996.
+<span id="ref-4">[4]</span> O'Neil et al. ["The Log-Structured Merge-Tree"](https://www.cs.umb.edu/~poneil/lsmtree.pdf). Acta Informatica, 1996.
 
 <span id="ref-5">[5]</span> Zhang et al. ["What's the Story in EBS Glory: Evolutions and Lessons in Building Cloud Block Store"](https://www.usenix.org/conference/fast24/presentation/zhang-weidong). USENIX FAST, 2024.
 
