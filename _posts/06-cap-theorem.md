@@ -6,7 +6,7 @@ date: '2026-02-03T12:00:00.000Z'
 
 You can't have your cake and eat it too. Not even if you say please. <img src="/heheheheheh.gif" alt="heheheheheh" style="display:inline;height:1em;vertical-align:middle;" />
 
-That's the first rule. Every distributed system is a choice between what you want and what you can actually have. The CAP theorem is the most famous way to say this, and also the most misunderstood.
+Every distributed system is a choice between what you want and what you can actually have. The CAP theorem is the most famous way to say this, and also the most misunderstood.
 
 ### The theorem
 
@@ -81,7 +81,7 @@ These are weaker than strong consistency but stronger than "anything goes." And 
 
 Systems can't be perfect, they will fail. CAP helps you understand the trade-offs. Every system you build on has made them. Understanding them tells you where it will fail. Every system you build will make them too.
 
-You can't have it all. 🎂
+That's the first rule. You can't have it all. 🎂
 
 <small>
 
