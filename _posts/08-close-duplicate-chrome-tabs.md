@@ -76,4 +76,4 @@ end if
 say "finished tab cleanup"
 ```
 
-macOS may ask for Automation permission the first time so the script can control Chrome. That's the point: no always-on extension required.
+macOS may ask for Automation permission the first time so the script can control Chrome.
