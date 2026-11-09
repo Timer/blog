@@ -2,6 +2,7 @@
 slug: 'btrees-vs-lsm'
 title: 'The art of procrastination, in storage'
 date: '2026-01-28T12:00:00.000Z'
+lastEdited: '2026-11-09'
 ---
 
 When do you organize your data? Every write, or... later?
@@ -14,8 +15,7 @@ Hash tables give you O(1) lookups. You hash a key, go directly to that slot, don
 
 But they have limitations:
 
-- **No ordering**: you can't ask "give me all keys between A and M"
-- **No range queries**: scanning requires touching every slot
+- **No ordering**: you can't ask "give me all keys between A and M" without touching every slot
 - **Resizing is expensive**: when the table fills up, you rehash everything
 
 For pure key-value lookups (memcached, Redis), hash tables are great. But databases need more.
@@ -36,6 +36,8 @@ This is the backbone of most relational databases: PostgreSQL, MySQL InnoDB, SQL
 4. Write it back
 5. Maybe rebalance, triggering more writes
 
+Real engines soften this by buffering dirty pages in memory behind a write-ahead log (a [write-back cache](/post/cache-strategies)). But every dirty page still has to be written back to its own spot on disk eventually.
+
 Your data is always organized. Lookups are predictable. But you're paying the bookkeeping cost on every operation, and that cost is random I/O.<sub style="font-size:0.7em"><a href="#ref-1">[1]</a></sub>
 
 ### The log-structured insight
@@ -44,17 +46,17 @@ In 1991, Rosenblum and Ousterhout asked a different question: what if we never m
 
 Their Log-structured File System (LFS) treated the entire disk as an append-only log. Writes always go to the end. Old data gets garbage collected later.
 
-This sounds wasteful, but it converts random writes into sequential writes. Sequential I/O is 10-100x faster on spinning disks, still 5-20x faster on SSDs.<sub style="font-size:0.7em"><a href="#ref-3">[3]</a></sub>
+This sounds wasteful, but it converts random writes into sequential writes. Sequential access can be orders of magnitude faster than random access on spinning disks, and it's still much faster on SSDs.<sub style="font-size:0.7em"><a href="#ref-3">[3]</a></sub>
 
-The same insight shows up in filesystems:
+The same insight lives on in modern filesystems:
 
-| Filesystem | Write strategy      | Philosophy                                |
-| ---------- | ------------------- | ----------------------------------------- |
-| ext4, XFS  | In-place + journal  | Established: fix it now                   |
-| btrfs, ZFS | Copy-on-write       | Next-gen: never overwrite, clean up later |
-| bcachefs   | Copy-on-write + LSM | Next-gen: both techniques combined        |
+| Filesystem | Write strategy                       | Philosophy                                |
+| ---------- | ------------------------------------ | ----------------------------------------- |
+| ext4, XFS  | In-place + journal                   | Established: fix it now                   |
+| btrfs, ZFS | Copy-on-write                        | Next-gen: never overwrite, clean up later |
+| bcachefs   | Copy-on-write + log-structured nodes | Next-gen: both techniques combined        |
 
-Copy-on-write filesystems are basically applying log-structured patterns to the filesystem layer.
+Copy-on-write filesystems are basically carrying that log-structured idea forward.
 
 ### LSM trees: Log-structured meets sorted
 
@@ -62,7 +64,7 @@ LSM trees (Log-Structured Merge trees) took the append-only insight and applied 
 
 The design:
 
-1. Writes go to memory first, in a sorted buffer called a memtable
+1. Writes go to memory first, in a sorted buffer called a memtable (plus a quick sequential append to a write-ahead log, so a crash doesn't lose them)
 2. When it fills up, flush to disk as a sorted file called an SSTable
 3. Periodically merge SSTables in the background (compaction)
 
@@ -70,9 +72,9 @@ Instead of organizing on every write, you batch it up and do it asynchronously. 
 
 ### Don't you end up doing the same work?
 
-No. Way less.
+No. Cheaper work.
 
-By batching hundreds of writes into a single sequential flush, you're amortizing the I/O cost across all of them. One disk seek instead of hundreds.
+By batching hundreds of writes into a single sequential flush, you're amortizing the I/O cost across all of them. One disk seek instead of hundreds. You actually write more bytes in total (more on that below), but sequential bytes are cheap.
 
 ### But reads must be slower?
 
@@ -90,22 +92,24 @@ For many workloads, read performance is comparable to B-trees. For write-heavy w
 
 Here's where it gets interesting.
 
-Spatial locality assumes data near each other in address space should be stored together. B-trees optimize for this: record #1000 is stored near record #1001.
+Spatial locality (the LFS paper calls it logical locality) assumes data near each other in key space should be stored together. B-trees optimize for this: record #1000 is stored near record #1001.
 
-Temporal locality assumes data written at the same time should be stored together. LSM trees optimize for this: everything flushed in the same batch ends up in the same SSTable.
+Temporal locality assumes data written at the same time should be stored together. Log-structured storage optimizes for this: everything flushed in the same batch ends up together on disk. In an LSM tree, that's a freshly flushed SSTable.
 
 Why does temporal locality matter? Because it matches how systems actually behave:
 
 | Scenario           | Why temporal locality helps                                 |
 | ------------------ | ----------------------------------------------------------- |
 | `npm install`      | Thousands of files written in a burst; they belong together |
-| App startup        | Reads config and state that was all persisted together      |
-| Checkpoint restore | Reading a consistent snapshot                               |
+| App startup        | Reads config and state that were all persisted together     |
+| Checkpoint restore | Snapshots are written in one burst and read back whole      |
 | Transactions       | Records committed together are accessed together            |
 
 Data you need right now was usually written together at some point. Grouping by write-time often matches access patterns better than grouping by key.
 
-### The trade-offs (there's always trade-offs)
+LSM trees only hold onto this for a while: compaction gradually re-sorts older data by key. But the newest data, usually the hottest, stays grouped by write-time.
+
+### The trade-offs (there are always trade-offs)
 
 LSM trees optimize for writes at some cost:
 
