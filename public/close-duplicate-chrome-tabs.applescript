@@ -1,61 +1,72 @@
 #!/usr/bin/osascript
 
-say "starting tab cleanup"
+-- Close duplicate Chrome tabs across all windows.
+-- Keeps the first tab seen for each URL and closes the later ones.
 
-set seenURLs to {}
-set duplicateTabs to {}
-
-tell application "Google Chrome"
-	activate
-
-	-- Find duplicate tabs across all windows
-	repeat with windowIndex from 1 to (count of windows)
-		set windowId to id of window windowIndex
-		set tabCount to count of tabs of window windowIndex
-
-		repeat with tabIndex from 1 to tabCount
-			set currentURL to URL of tab tabIndex of window windowIndex
-
-			if currentURL is missing value then
-				set currentURL to ""
-			else
-				set currentURL to currentURL as string
-			end if
-
-			if currentURL is not "" then
-				if seenURLs contains currentURL then
-					copy {windowId, tabIndex} to end of duplicateTabs
-				else
-					copy currentURL to end of seenURLs
-				end if
-			end if
-		end repeat
-	end repeat
-
-	-- Close duplicates from highest tab index to lowest per window
+on closeDuplicateTabs(windowIds)
+	set seenURLs to {}
 	set closedTabCount to 0
 
-	repeat with windowIndex from 1 to (count of windows)
-		set windowId to id of window windowIndex
+	tell application "Google Chrome"
+		repeat with windowRef in windowIds
+			-- A loop variable is a reference to a list item; take the value itself
+			set windowId to contents of windowRef
 
-		repeat with duplicateIndex from (count of duplicateTabs) to 1 by -1
-			set duplicateEntry to item duplicateIndex of duplicateTabs
+			try
+				-- One request per window, not one per tab
+				set tabURLs to URL of tabs of window id windowId
+				set windowMode to mode of window id windowId
+			on error
+				-- The window closed after the snapshot was taken
+				set tabURLs to {}
+				set windowMode to ""
+			end try
 
-			if item 1 of duplicateEntry is windowId then
-				set tabIndex to item 2 of duplicateEntry
+			-- Find this window's duplicates
+			set duplicateIndexes to {}
 
+			repeat with tabIndex from 1 to (count of tabURLs)
+				set currentURL to item tabIndex of tabURLs
+
+				if currentURL is not missing value and currentURL is not "" then
+					-- Incognito tabs are only duplicates of other incognito tabs
+					set urlKey to windowMode & " " & currentURL
+
+					-- AppleScript ignores case when it compares text unless told otherwise
+					considering case
+						if seenURLs contains urlKey then
+							set end of duplicateIndexes to tabIndex
+						else
+							set end of seenURLs to urlKey
+						end if
+					end considering
+				end if
+			end repeat
+
+			-- Close from the highest index down, so the indexes still to close stay valid
+			repeat with i from (count of duplicateIndexes) to 1 by -1
 				try
-					close tab tabIndex of window id windowId
+					close tab (item i of duplicateIndexes) of window id windowId
 					set closedTabCount to closedTabCount + 1
 				end try
-			end if
+			end repeat
 		end repeat
-	end repeat
-end tell
+	end tell
 
-if closedTabCount > 0 then
-	say closedTabCount
-	say "tabs closed"
+	return closedTabCount
+end closeDuplicateTabs
+
+say "starting tab cleanup"
+
+-- Snapshot window IDs first: a window that closes along the way would shift every index after it
+tell application "Google Chrome" to set windowIds to id of windows
+
+set closedTabCount to closeDuplicateTabs(windowIds)
+
+if closedTabCount is 1 then
+	say "one tab closed"
+else if closedTabCount > 1 then
+	say (closedTabCount as string) & " tabs closed"
 else
 	say "no duplicate tabs found"
 end if
