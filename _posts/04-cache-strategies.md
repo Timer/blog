@@ -2,11 +2,12 @@
 slug: 'cache-strategies'
 title: 'Cache strategies, explained'
 date: '2026-01-29T12:00:00.000Z'
+lastEdited: '2026-11-09'
 ---
 
 Where does the write go? To the cache, to the backing store, or both?
 
-This question defines your caching strategy. Get it wrong and you lose data or tank performance. Get it right and you unlock the same trick that makes [LSM trees](/post/btrees-vs-lsm) and NVMe drives fast.
+This question defines your caching strategy. Get it wrong and you lose data or tank performance. Get it right and you unlock the same trick that makes [LSM trees](/post/btrees-vs-lsm) and SSDs fast.
 
 ### Write-through
 
@@ -49,6 +50,8 @@ App → Cache → Backing Store (reads, on miss)
 
 Useful when you're writing data you don't expect to read soon. Avoids polluting the cache with write-once data.
 
+The catch: if the key is already cached, that entry is now stale. Invalidate it on write.
+
 ### Read-through (pull-through)
 
 On a cache miss, the cache fetches from the backing store, stores it, then returns it. The application doesn't talk to the backing store directly.
@@ -77,13 +80,13 @@ More control, more code. You decide what gets cached and when.
 
 ### The trade-off matrix
 
-| Strategy      | Write latency | Read latency | Durability        | Complexity |
-| ------------- | ------------- | ------------ | ----------------- | ---------- |
-| Write-through | Slow          | Fast (hit)   | High              | Low        |
-| Write-back    | Fast          | Fast (hit)   | Needs replication | Medium     |
-| Write-around  | Slow          | Fast (hit)   | High              | Low        |
-| Read-through  | N/A           | Fast (hit)   | N/A               | Low        |
-| Cache-aside   | N/A           | Fast (hit)   | N/A               | High       |
+| Strategy      | Write latency | Read latency            | Durability               | Complexity |
+| ------------- | ------------- | ----------------------- | ------------------------ | ---------- |
+| Write-through | Slow          | Fast (hit)              | High                     | Low        |
+| Write-back    | Fast          | Fast (hit)              | Needs replication or WAL | Medium     |
+| Write-around  | Slow          | Slow (miss after write) | High                     | Low        |
+| Read-through  | N/A           | Fast (hit)              | N/A                      | Low        |
+| Cache-aside   | N/A           | Fast (hit)              | N/A                      | High       |
 
 ### Where you see this
 
@@ -92,18 +95,18 @@ Write-back shows up everywhere performance matters:
 | System               | Cache layer    | Backing store   | Durability strategy       |
 | -------------------- | -------------- | --------------- | ------------------------- |
 | LSM trees            | Memtable (RAM) | SSTables (disk) | WAL (write-ahead log)     |
-| NVMe SSDs            | DRAM cache     | NAND flash      | Flush on fsync            |
+| SSDs                 | DRAM cache     | NAND flash      | Flush on fsync            |
 | CPU                  | L1/L2/L3 cache | RAM             | None (volatile anyway)    |
 | Linux page cache     | RAM            | Disk            | fsync, O_DIRECT to bypass |
 | Database buffer pool | RAM            | Disk            | WAL, checkpoints          |
 
 The pattern is the same: absorb writes in fast storage, flush to slow storage in batches.
 
-### The NVMe parallel
+### The SSD parallel
 
-NVMe drives have a DRAM write-back cache in front of the NAND flash. When you write, data lands in DRAM first. The drive reports success immediately, then flushes to flash in the background.
+Most SSDs (NVMe and SATA alike) have a DRAM write-back cache in front of the NAND flash. When you write, data lands in DRAM first. The drive reports success immediately, then flushes to flash in the background.
 
-This is why databases use fsync to force data to stable storage. Without it, a power loss can lose recent writes that the drive already acknowledged.
+This is why databases use fsync to force data to stable storage. It flushes two stacked write-back caches: the OS page cache, then the drive's own cache. Without it, a power loss can lose recent writes that the drive already acknowledged.
 
 Same trade-off as LSM trees: write-back gives you speed, but you need a strategy for failures.
 
@@ -123,9 +126,9 @@ Read:  App → Cache (has fresh data, including unflushed writes)
           Backing Store
 ```
 
-This is how LSM trees work: reads check the memtable first (the write-back cache), then fall through to SSTables on disk. The memtable always has the freshest view. Compaction syncs everything to disk in the background.
+This is how LSM trees work: reads check the memtable first (the write-back cache), then fall through to SSTables on disk. The memtable always has the freshest view. Flushes sync it to disk in the background.
 
-Same pattern in a database buffer pool, CPU cache, or NVMe drive. The fast layer absorbs writes and serves reads. The slow layer provides durability.
+Same pattern in a database buffer pool, CPU cache, or SSD. The fast layer absorbs writes and serves reads. The slow layer catches up later and, when it's a disk, provides durability.
 
 ### When to use what
 
@@ -136,4 +139,4 @@ Same pattern in a database buffer pool, CPU cache, or NVMe drive. The fast layer
 
 ### So what
 
-Write-back is the key to making writes fast. But it's a bet: your cache won't die before flushing. LSM trees, NVMe drives, and CPU caches all make that bet. The difference is how they handle losing it.
+Write-back is the key to making writes fast. But it's a bet that your cache won't die before it flushes. LSM trees, SSDs, and database buffer pools all make that bet. The difference is how they handle losing it.
