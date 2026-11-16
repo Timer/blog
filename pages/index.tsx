@@ -5,11 +5,16 @@ import React from 'react';
 import { BlogPost, getPosts } from '../utils/posts';
 
 export async function getStaticProps() {
-  const sortedPosts = getPosts();
-  return { props: { posts: sortedPosts } };
+  // The list needs titles and dates only; leave each post's text to its own page.
+  const posts = getPosts().map(({ content, ...post }) => post);
+  return { props: { posts } };
 }
 
-export default function Home({ posts }: { posts: BlogPost[] }) {
+export default function Home({
+  posts,
+}: {
+  posts: Omit<BlogPost, 'content'>[];
+}) {
   return (
     <main className="page-content" aria-label="Content">
       <div className="wrapper">
